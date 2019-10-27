@@ -1,9 +1,9 @@
 package EShop.lab2
 
-import EShop.lab2.Checkout.{CancelCheckout, ReceivePayment, SelectDeliveryMethod, SelectPayment, StartCheckout}
-import akka.actor.{ActorSystem, Cancellable, Props}
+import akka.actor.{ActorRef, ActorSystem, Cancellable, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
+import EShop.lab2.message._
 
 import scala.concurrent.duration.{FiniteDuration, _}
 
@@ -41,7 +41,7 @@ class CheckoutTest
       override val checkoutTimerDuration: FiniteDuration = 1.seconds
 
       override def cancelled: Receive = {
-        case any => sender ! cancelledMsg
+        case _ => sender ! cancelledMsg
       }
     }))
 
@@ -76,7 +76,7 @@ class CheckoutTest
       override val checkoutTimerDuration: FiniteDuration = 1.seconds
 
       override def cancelled: Receive = {
-        case any => sender ! cancelledMsg
+        case _ => sender ! cancelledMsg
       }
     }))
 
@@ -116,7 +116,7 @@ class CheckoutTest
       override val paymentTimerDuration: FiniteDuration = 1.seconds
 
       override def cancelled: Receive = {
-        case any => sender ! cancelledMsg
+        case _ => sender ! cancelledMsg
       }
     }))
 
@@ -167,10 +167,10 @@ object CheckoutTest {
   val cancelledMsg              = "cancelled"
   val closedMsg                 = "closed"
 
-  def checkoutActorWithResponseOnStateChange(system: ActorSystem) =
+  def checkoutActorWithResponseOnStateChange(system: ActorSystem): ActorRef =
     system.actorOf(Props(new Checkout {
 
-      override def receive() = {
+      override def receive: Receive = {
         val result = super.receive
         sender ! emptyMsg
         result
@@ -205,6 +205,5 @@ object CheckoutTest {
         sender ! closedMsg
         result
       }
-
     }))
 }

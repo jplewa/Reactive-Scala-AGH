@@ -1,9 +1,9 @@
 package EShop.lab2
 
-import EShop.lab2.CartActor.{AddItem, CancelCheckout, CloseCheckout, RemoveItem, StartCheckout}
 import akka.actor.{ActorRef, ActorSystem, Cancellable, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
+import EShop.lab2.message._
 
 import scala.concurrent.duration._
 
@@ -74,14 +74,15 @@ class CartActorTest
 
   it should "cancel checkout properly" in {
     val cart = cartActorWithCartSizeResponseOnStateChange(system)
+    println(s"Path: $cart")
 
     cart ! AddItem("Cymbelin")
     expectMsg(nonEmptyMsg)
     expectMsg(1)
     cart ! StartCheckout
+    cart ! CancelCheckout
     expectMsg(inCheckoutMsg)
     expectMsg(1)
-    cart ! CancelCheckout
     expectMsg(nonEmptyMsg)
     expectMsg(1)
   }
@@ -142,7 +143,7 @@ object CartActorTest {
     system.actorOf(Props(new CartActor {
       override val cartTimerDuration: FiniteDuration = 1.seconds
 
-      override def empty() = {
+      override def empty: Receive = {
         val result = super.empty
         sender ! emptyMsg
         sender ! 0
@@ -162,7 +163,5 @@ object CartActorTest {
         sender ! cart.size
         result
       }
-
     }))
-
 }
