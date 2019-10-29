@@ -1,14 +1,13 @@
 package EShop.lab2
 
+import EShop.lab2.CartActor._
+import EShop.lab2.CartActorFSM.Status._
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
-import EShop.lab2.CartActor._
-import EShop.lab2.CartActorFSM.Status._
-import EShop.lab2.message._
 
-class CartFSMTest
-  extends TestKit(ActorSystem("CartFSMTest"))
+class CartActorFSMTest
+  extends TestKit(ActorSystem("CartActorFSMTest"))
   with FlatSpecLike
   with ImplicitSender
   with BeforeAndAfterAll {

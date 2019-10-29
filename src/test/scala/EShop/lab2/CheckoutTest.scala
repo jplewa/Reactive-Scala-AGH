@@ -1,7 +1,6 @@
 package EShop.lab2
 
 import EShop.lab2.Checkout._
-import EShop.lab2.message._
 import akka.actor.{ActorRef, ActorSystem, Cancellable, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
@@ -10,16 +9,17 @@ import scala.concurrent.duration.{FiniteDuration, _}
 
 class CheckoutTest
   extends TestKit(ActorSystem("CheckoutTest"))
-    with FlatSpecLike
-    with ImplicitSender
-    with BeforeAndAfterAll {
+  with FlatSpecLike
+  with ImplicitSender
+  with BeforeAndAfterAll {
 
-  val cartActor      = TestProbe().ref
-  val deliveryMethod = "post"
-  val paymentMethod  = "paypal"
+  val cartActor: ActorRef    = TestProbe().ref
+  val deliveryMethod: String = "post"
+  val paymentMethod: String  = "paypal"
 
   override def afterAll: Unit =
     TestKit.shutdownActorSystem(system)
+
   import CheckoutTest._
 
   it should "be in selectingDelivery state after checkout start" in {
@@ -43,7 +43,7 @@ class CheckoutTest
       override val checkoutTimerDuration: FiniteDuration = 1.seconds
 
       override def cancelled: Receive = {
-        case any => sender ! cancelledMsg
+        case _ => sender ! cancelledMsg
       }
     }))
 
@@ -78,7 +78,7 @@ class CheckoutTest
       override val checkoutTimerDuration: FiniteDuration = 1.seconds
 
       override def cancelled: Receive = {
-        case any => sender ! cancelledMsg
+        case _ => sender ! cancelledMsg
       }
     }))
 
@@ -124,7 +124,7 @@ class CheckoutTest
       override val paymentTimerDuration: FiniteDuration = 1.seconds
 
       override def cancelled: Receive = {
-        case any => sender ! cancelledMsg
+        case _ => sender ! cancelledMsg
       }
     }))
 
@@ -184,7 +184,7 @@ object CheckoutTest {
   val cancelledMsg              = "cancelled"
   val closedMsg                 = "closed"
 
-  def checkoutActorWithResponseOnStateChange(system: ActorSystem)(cartActor: ActorRef) =
+  def checkoutActorWithResponseOnStateChange(system: ActorSystem)(cartActor: ActorRef): ActorRef =
     system.actorOf(Props(new Checkout(cartActor) {
 
       override def receive: Receive = {

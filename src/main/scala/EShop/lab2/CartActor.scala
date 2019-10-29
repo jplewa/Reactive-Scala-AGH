@@ -1,18 +1,32 @@
 package EShop.lab2
 
-import akka.actor.{Actor, Cancellable, Props, Timers}
+import EShop.lab2.Checkout.CheckOutClosed
+import akka.actor.{Actor, ActorRef, Cancellable, Props, Timers}
 import akka.event.LoggingReceive
-import EShop.lab2.message._
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
 object CartActor {
 
-  def props = Props(new CartActor())
+  sealed trait Command
+  case class AddItem(item: Any)    extends Command
+  case class RemoveItem(item: Any) extends Command
+  case object ExpireCart           extends Command
+  case object StartCheckout        extends Command
+  case object CancelCheckout       extends Command
+  case object CloseCheckout        extends Command
+  case object GetItems             extends Command // command made to make testing easier
+
+  sealed trait Event
+  case class CheckoutStarted(checkoutRef: ActorRef) extends Event
+
+  def props() = Props(new CartActor())
 }
 
 class CartActor extends Actor with Timers {
+
+  import CartActor._
 
   val cartTimerDuration: FiniteDuration = 5 seconds
 
@@ -23,6 +37,9 @@ class CartActor extends Actor with Timers {
   def empty: Receive = LoggingReceive {
     case AddItem(item) =>
       context become nonEmpty(Cart.empty.addItem(item), scheduleTimer)
+    case GetItems =>
+      sender ! Cart.empty
+      context become empty
   }
 
   def nonEmpty(cart: Cart, timer: Cancellable): Receive = LoggingReceive {
@@ -40,17 +57,24 @@ class CartActor extends Actor with Timers {
     case StartCheckout =>
       timer.cancel()
       val checkout = context.actorOf(Checkout.props(self), "checkout")
-      checkout ! StartCheckout
+      checkout ! Checkout.StartCheckout
+      sender ! CheckoutStarted(checkout)
       context become inCheckout(cart)
+    case GetItems =>
+      sender ! cart
+      context become nonEmpty(cart, timer)
   }
 
   def inCheckout(cart: Cart): Receive = LoggingReceive {
     case CancelCheckout =>
-      context.child("checkout").foreach(_ ! CancelCheckout)
+      context.child("checkout").foreach(_ ! Checkout.CancelCheckout)
       context become nonEmpty(cart, scheduleTimer)
     case CloseCheckout =>
       context.child("checkout").foreach(_ ! CloseCheckout)
       context become empty
+    case GetItems =>
+      sender ! cart
+      context become inCheckout(cart)
   }
 
   private def scheduleTimer: Cancellable =
