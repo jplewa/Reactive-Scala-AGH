@@ -4,6 +4,7 @@ import EShop.lab2.CartActor._
 import akka.actor.{ActorRef, ActorSystem, Cancellable, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
+import EShop.lab2.message._
 
 import scala.concurrent.duration._
 
@@ -154,7 +155,7 @@ object CartActorTest {
     system.actorOf(Props(new CartActor {
       override val cartTimerDuration: FiniteDuration = 1.seconds
 
-      override def empty() = {
+      override def empty: Receive = {
         val result = super.empty
         sender ! emptyMsg
         sender ! 0
@@ -174,7 +175,5 @@ object CartActorTest {
         sender ! cart.size
         result
       }
-
     }))
-
 }

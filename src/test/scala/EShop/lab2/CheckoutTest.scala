@@ -1,6 +1,7 @@
 package EShop.lab2
 
 import EShop.lab2.Checkout._
+import EShop.lab2.message._
 import akka.actor.{ActorRef, ActorSystem, Cancellable, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
@@ -9,9 +10,9 @@ import scala.concurrent.duration.{FiniteDuration, _}
 
 class CheckoutTest
   extends TestKit(ActorSystem("CheckoutTest"))
-  with FlatSpecLike
-  with ImplicitSender
-  with BeforeAndAfterAll {
+    with FlatSpecLike
+    with ImplicitSender
+    with BeforeAndAfterAll {
 
   val cartActor      = TestProbe().ref
   val deliveryMethod = "post"
@@ -186,7 +187,7 @@ object CheckoutTest {
   def checkoutActorWithResponseOnStateChange(system: ActorSystem)(cartActor: ActorRef) =
     system.actorOf(Props(new Checkout(cartActor) {
 
-      override def receive() = {
+      override def receive: Receive = {
         val result = super.receive
         sender ! emptyMsg
         result
@@ -221,6 +222,5 @@ object CheckoutTest {
         sender ! closedMsg
         result
       }
-
     }))
 }
