@@ -1,12 +1,12 @@
 package EShop.lab2
 
-import EShop.lab2.CartActor.{AddItem, CancelCheckout, CloseCheckout, RemoveItem, StartCheckout}
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
-import EShop.lab2.CartFSM.Status._
+import EShop.lab2.CartActorFSM.Status._
+import EShop.lab2.message._
 
-class CartFSMTest
+class CartActorFSMTest
   extends TestKit(ActorSystem("CheckoutTest"))
   with FlatSpecLike
   with ImplicitSender
@@ -15,7 +15,7 @@ class CartFSMTest
   override def afterAll: Unit =
     TestKit.shutdownActorSystem(system)
 
-  import CartFSMTest._
+  import CartActorFSMTest._
 
   it should "contain one item after adding new item" in {
     val cart = cartActorWithCartSizeResponseOnStateChange(system)
@@ -116,17 +116,16 @@ class CartFSMTest
     expectMsg(nonEmptyMsg)
     expectMsg(0)
   }
-
 }
 
-object CartFSMTest {
+object CartActorFSMTest {
 
   val emptyMsg      = "empty"
   val nonEmptyMsg   = "nonEmpty"
   val inCheckoutMsg = "inCheckout"
 
-  def cartActorWithCartSizeResponseOnStateChange(system: ActorSystem) =
-    system.actorOf(Props(new CartFSM {
+  def cartActorWithCartSizeResponseOnStateChange(system: ActorSystem): ActorRef =
+    system.actorOf(Props(new CartActorFSM {
 
       onTransition {
         case Empty -> NonEmpty => {

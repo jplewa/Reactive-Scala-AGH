@@ -1,10 +1,10 @@
 package EShop.lab2
 
-import EShop.lab2.Checkout._
 import EShop.lab2.CheckoutFSM.Status._
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestFSMRef, TestKit}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
+import EShop.lab2.message._
 
 class CheckoutFSMTest
   extends TestKit(ActorSystem("CheckoutTest"))
