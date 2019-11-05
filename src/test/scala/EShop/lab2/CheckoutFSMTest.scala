@@ -7,19 +7,21 @@ import akka.testkit.{ImplicitSender, TestFSMRef, TestKit, TestProbe}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
 
 class CheckoutFSMTest
-  extends TestKit(ActorSystem("CheckoutTest"))
+  extends TestKit(ActorSystem("CheckoutFSMTest"))
   with Matchers
   with FlatSpecLike
   with ImplicitSender
   with BeforeAndAfterAll {
 
-  override def afterAll: Unit =
-    TestKit.shutdownActorSystem(system)
+  val cartActorStub: ActorRef = TestProbe().ref
+
   import CheckoutFSMTest._
 
-  val cartActorStub  = TestProbe().ref
   val deliveryMethod = "post"
   val paymentMethod  = "paypal"
+
+  override def afterAll: Unit =
+    TestKit.shutdownActorSystem(system)
 
   it should "be in selectingDelivery state after checkout start" in {
     val checkoutActor = checkoutActorWithResponseOnStateChange(system)(cartActorStub)
@@ -117,7 +119,7 @@ class CheckoutFSMTest
     fishForMessage() {
       case _: PaymentStarted => true
     }
-    Thread.sleep(3000)
+    Thread.sleep(2000)
     checkoutActor ! ReceivePayment
     checkoutActor.stateName shouldBe Cancelled
   }
