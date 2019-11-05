@@ -1,13 +1,13 @@
 package EShop.lab2
 
+import EShop.lab2.CartActor._
+import EShop.lab2.CartActorFSM.Status._
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
-import EShop.lab2.CartActorFSM.Status._
-import EShop.lab2.message._
 
 class CartActorFSMTest
-  extends TestKit(ActorSystem("CheckoutTest"))
+  extends TestKit(ActorSystem("CartActorFSMTest"))
   with FlatSpecLike
   with ImplicitSender
   with BeforeAndAfterAll {
@@ -53,8 +53,11 @@ class CartActorFSMTest
     expectMsg(nonEmptyMsg)
     expectMsg(0)
     cart ! StartCheckout
-    expectMsg(inCheckoutMsg)
-    expectMsg(1)
+    fishForMessage() {
+      case m: String if m == inCheckoutMsg => true
+      case _: CheckoutStarted              => false
+    }
+    fishForMessage() { case 1 => true }
   }
 
   it should "cancel checkout properly" in {
@@ -64,7 +67,10 @@ class CartActorFSMTest
     expectMsg(nonEmptyMsg)
     expectMsg(0)
     cart ! StartCheckout
-    expectMsg(inCheckoutMsg)
+    fishForMessage() {
+      case m: String if m == inCheckoutMsg => true
+      case _: CheckoutStarted              => false
+    }
     expectMsg(1)
     cart ! CancelCheckout
     expectMsg(nonEmptyMsg)
@@ -78,7 +84,10 @@ class CartActorFSMTest
     expectMsg(nonEmptyMsg)
     expectMsg(0)
     cart ! StartCheckout
-    expectMsg(inCheckoutMsg)
+    fishForMessage() {
+      case m: String if m == inCheckoutMsg => true
+      case _: CheckoutStarted              => false
+    }
     expectMsg(1)
     cart ! CloseCheckout
     expectMsg(emptyMsg)
@@ -92,7 +101,10 @@ class CartActorFSMTest
     expectMsg(nonEmptyMsg)
     expectMsg(0)
     cart ! StartCheckout
-    expectMsg(inCheckoutMsg)
+    fishForMessage() {
+      case m: String if m == inCheckoutMsg => true
+      case _: CheckoutStarted              => false
+    }
     expectMsg(1)
     cart ! AddItem("Henryk V")
     expectNoMessage
