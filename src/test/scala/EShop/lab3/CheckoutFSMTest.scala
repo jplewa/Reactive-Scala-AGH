@@ -3,9 +3,8 @@ package EShop.lab3
 import EShop.lab2.CartActor.CloseCheckout
 import EShop.lab2.Checkout
 import EShop.lab2.Checkout._
-import EShop.lab3.Payment.DoPayment
 import akka.actor.{ActorSystem, Props}
-import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
+import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
 

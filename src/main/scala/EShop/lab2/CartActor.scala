@@ -1,6 +1,5 @@
 package EShop.lab2
 
-import EShop.lab2.Checkout.CheckOutClosed
 import akka.actor.{Actor, ActorRef, Cancellable, Props, Timers}
 import akka.event.LoggingReceive
 
@@ -10,6 +9,7 @@ import scala.language.postfixOps
 object CartActor {
 
   sealed trait Command
+
   case class AddItem(item: Any)    extends Command
   case class RemoveItem(item: Any) extends Command
   case object ExpireCart           extends Command
