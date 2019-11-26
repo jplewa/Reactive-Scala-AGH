@@ -46,7 +46,7 @@ class CartActorFSM extends LoggingFSM[Status.Value, Cart] {
     case Event(StartCheckout, cart) =>
       val checkout: ActorRef = context.actorOf(Props(new CheckoutFSM(self)), "checkout")
       checkout ! Checkout.StartCheckout
-      sender ! CheckoutStarted(checkout)
+      sender ! CheckoutStarted(checkout, cart)
       goto(InCheckout).using(cart)
     case Event(StateTimeout, _) =>
       goto(Empty).using(Cart.empty)

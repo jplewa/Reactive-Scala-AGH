@@ -1,6 +1,5 @@
 package EShop.lab2
 
-import EShop.lab2.Checkout.CheckOutClosed
 import akka.actor.{Actor, ActorRef, Cancellable, Props, Timers}
 import akka.event.LoggingReceive
 
@@ -10,6 +9,7 @@ import scala.language.postfixOps
 object CartActor {
 
   sealed trait Command
+
   case class AddItem(item: Any)    extends Command
   case class RemoveItem(item: Any) extends Command
   case object ExpireCart           extends Command
@@ -19,7 +19,13 @@ object CartActor {
   case object GetItems             extends Command // command made to make testing easier
 
   sealed trait Event
-  case class CheckoutStarted(checkoutRef: ActorRef) extends Event
+  case class CheckoutStarted(checkoutRef: ActorRef, cart: Cart) extends Event
+  case class ItemAdded(itemId: Any, cart: Cart)                 extends Event
+  case class ItemRemoved(itemId: Any, cart: Cart)               extends Event
+  case object CartEmptied                                       extends Event
+  case object CartExpired                                       extends Event
+  case object CheckoutClosed                                    extends Event
+  case class CheckoutCancelled(cart: Cart)                      extends Event
 
   def props() = Props(new CartActor())
 }
@@ -58,7 +64,7 @@ class CartActor extends Actor with Timers {
       timer.cancel()
       val checkout = context.actorOf(Checkout.props(self), "checkout")
       checkout ! Checkout.StartCheckout
-      sender ! CheckoutStarted(checkout)
+      sender ! CheckoutStarted(checkout, cart)
       context become inCheckout(cart)
     case GetItems =>
       sender ! cart

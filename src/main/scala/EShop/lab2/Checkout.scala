@@ -23,10 +23,14 @@ object Checkout {
   case class SelectPayment(payment: String)       extends Command
   case object ExpirePayment                       extends Command
   case object ReceivePayment                      extends Command
+  case object Expire                              extends Command
 
   sealed trait Event
-  case object CheckOutClosed                   extends Event
-  case class PaymentStarted(payment: ActorRef) extends Event
+  case object CheckoutClosed                        extends Event
+  case class PaymentStarted(payment: ActorRef)      extends Event
+  case object CheckoutStarted                       extends Event
+  case object CheckoutCancelled                     extends Event
+  case class DeliveryMethodSelected(method: String) extends Event
 
   def props(cart: ActorRef) = Props(new Checkout(cart))
 }
@@ -37,7 +41,8 @@ class Checkout(cartActor: ActorRef) extends Actor {
 
   val checkoutTimerDuration: FiniteDuration = 1 seconds
   val paymentTimerDuration: FiniteDuration  = 1 seconds
-  private val scheduler: Scheduler          = context.system.scheduler
+
+  private val scheduler: Scheduler = context.system.scheduler
 
   def receive: Receive = LoggingReceive {
     case StartCheckout =>
