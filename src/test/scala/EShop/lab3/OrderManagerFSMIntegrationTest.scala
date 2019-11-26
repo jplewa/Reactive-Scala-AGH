@@ -11,7 +11,7 @@ import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
 import scala.concurrent.duration._
 
 class OrderManagerFSMIntegrationTest
-  extends TestKit(ActorSystem("OrderManagerIntegrationTest"))
+  extends TestKit(ActorSystem("OrderManagerFSMIntegrationTest"))
   with FlatSpecLike
   with ImplicitSender
   with BeforeAndAfterAll
@@ -45,5 +45,4 @@ class OrderManagerFSMIntegrationTest
     (orderManager ? Pay).mapTo[String].futureValue shouldBe "order manager finished job"
     orderManager.stateName shouldBe Finished
   }
-
 }

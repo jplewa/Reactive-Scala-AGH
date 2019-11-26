@@ -13,12 +13,13 @@ class CheckoutTest
   with ImplicitSender
   with BeforeAndAfterAll {
 
-  val cartActor      = TestProbe().ref
-  val deliveryMethod = "post"
-  val paymentMethod  = "paypal"
+  val cartActor: ActorRef    = TestProbe().ref
+  val deliveryMethod: String = "post"
+  val paymentMethod: String  = "paypal"
 
   override def afterAll: Unit =
     TestKit.shutdownActorSystem(system)
+
   import CheckoutTest._
 
   it should "be in selectingDelivery state after checkout start" in {
@@ -42,7 +43,7 @@ class CheckoutTest
       override val checkoutTimerDuration: FiniteDuration = 1.seconds
 
       override def cancelled: Receive = {
-        case any => sender ! cancelledMsg
+        case _ => sender ! cancelledMsg
       }
     }))
 
@@ -77,7 +78,7 @@ class CheckoutTest
       override val checkoutTimerDuration: FiniteDuration = 1.seconds
 
       override def cancelled: Receive = {
-        case any => sender ! cancelledMsg
+        case _ => sender ! cancelledMsg
       }
     }))
 
@@ -123,7 +124,7 @@ class CheckoutTest
       override val paymentTimerDuration: FiniteDuration = 1.seconds
 
       override def cancelled: Receive = {
-        case any => sender ! cancelledMsg
+        case _ => sender ! cancelledMsg
       }
     }))
 
@@ -183,10 +184,10 @@ object CheckoutTest {
   val cancelledMsg              = "cancelled"
   val closedMsg                 = "closed"
 
-  def checkoutActorWithResponseOnStateChange(system: ActorSystem)(cartActor: ActorRef) =
+  def checkoutActorWithResponseOnStateChange(system: ActorSystem)(cartActor: ActorRef): ActorRef =
     system.actorOf(Props(new Checkout(cartActor) {
 
-      override def receive() = {
+      override def receive: Receive = {
         val result = super.receive
         sender ! emptyMsg
         result
@@ -221,6 +222,5 @@ object CheckoutTest {
         sender ! closedMsg
         result
       }
-
     }))
 }
