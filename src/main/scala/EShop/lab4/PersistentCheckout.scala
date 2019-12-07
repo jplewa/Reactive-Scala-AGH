@@ -56,7 +56,7 @@ class PersistentCheckout(cartActor: ActorRef, val persistenceId: String) extends
       persist(CheckoutCancelled)(updateState(_))
     case SelectPayment(method) =>
       timer.cancel()
-      val payment = context.actorOf(Payment.props(method, sender, self), "payment")
+      val payment        = context.actorOf(Payment.props(method, sender, self), "payment")
       val paymentStarted = PaymentStarted(payment)
       persist(paymentStarted) { event =>
         sender ! event

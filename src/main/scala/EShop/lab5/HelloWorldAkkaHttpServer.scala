@@ -47,5 +47,4 @@ class HelloWorldAkkaHttpServer extends HttpApp with JsonSupport {
       }
     }
   }
-
 }

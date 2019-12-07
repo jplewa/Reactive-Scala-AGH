@@ -37,5 +37,4 @@ class PaymentTest
     manager.expectMsg(PaymentConfirmed)
     server.system.terminate()
   }
-
 }

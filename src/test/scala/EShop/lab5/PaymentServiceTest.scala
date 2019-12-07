@@ -1,12 +1,12 @@
 package EShop.lab5
 
 import EShop.lab5.PaymentService.{PaymentClientError, PaymentServerError, PaymentSucceeded}
+import akka.actor.{Actor, ActorRef, ActorSystem, OneForOneStrategy, Props, SupervisorStrategy}
 import akka.actor.SupervisorStrategy.Stop
-import akka.actor.{Actor, ActorSystem, OneForOneStrategy, Props, SupervisorStrategy, Terminated}
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
+import org.scalatest.concurrent.ScalaFutures
 
 import scala.concurrent.duration._
 
@@ -34,9 +34,9 @@ class PaymentServiceTest
     val probe   = TestProbe()
     val failure = TestProbe()
 
-    val watcher = system.actorOf(Props(new Actor {
+    system.actorOf(Props(new Actor {
 
-      val paymentService = context.actorOf(PaymentService.props("paypal", probe.ref))
+      val paymentService: ActorRef = context.actorOf(PaymentService.props("paypal", probe.ref))
       watch(paymentService)
 
       override def receive: Receive = {
@@ -58,9 +58,9 @@ class PaymentServiceTest
     val probe   = TestProbe()
     val failure = TestProbe()
 
-    val watcher = system.actorOf(Props(new Actor {
+    system.actorOf(Props(new Actor {
 
-      val paymentService = context.actorOf(PaymentService.props("someUnknownMethod", probe.ref))
+      val paymentService: ActorRef = context.actorOf(PaymentService.props("someUnknownMethod", probe.ref))
       watch(paymentService)
 
       override def receive: Receive = {
@@ -74,8 +74,6 @@ class PaymentServiceTest
             Stop
         }
     }))
-
     failure.expectMsg("failed")
   }
-
 }
