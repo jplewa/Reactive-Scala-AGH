@@ -1,17 +1,20 @@
 package EShop.lab6
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem}
 import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
 import akka.http.scaladsl.server.{HttpApp, Route}
 import akka.pattern.ask
 import akka.routing.RoundRobinPool
 import akka.util.Timeout
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
+import EShop.lab5.{JsonSupport, ProductCatalog, SearchService}
+import EShop.lab5.ProductCatalog.{GetItems, Items}
 
 import scala.concurrent.duration._
 import scala.util.Try
 
-object ClusterNodeApp extends App {
+object ProductCatalogClusterNodeApp extends App {
+
   private val config = ConfigFactory.load()
 
   val system = ActorSystem(
@@ -22,40 +25,38 @@ object ClusterNodeApp extends App {
   )
 }
 
-object WorkHttpClusterApp extends App {
+object ProductCatalogHttpClusterApp extends App {
   println()
   println()
   println()
   println()
   println(args(0).toInt)
-  new WorkHttpServerInCluster().startServer("localhost", args(0).toInt)
+  new ProductCatalogHttpClusterApp().startServer("localhost", args(0).toInt)
 }
 
-class WorkHttpServerInCluster() extends HttpApp with JsonSupport {
-
-  private val config = ConfigFactory.load()
-
-  val system = ActorSystem(
+class ProductCatalogHttpClusterApp() extends HttpApp with JsonSupport {
+  private val config: Config = ConfigFactory.load()
+  private val system: ActorSystem = ActorSystem(
     "ClusterWorkRouters",
     config.getConfig("cluster-default")
   )
 
-  val workers: ActorRef = system.actorOf(
-    ClusterRouterPool(
-      RoundRobinPool(0),
-      ClusterRouterPoolSettings(totalInstances = 100, maxInstancesPerNode = 3, allowLocalRoutees = false)
-    ).props(Props[HttpWorker]),
-    name = "clusterWorkerRouter"
-  )
-
   implicit val timeout: Timeout = 5.seconds
 
+  val clusterWorkers: ActorRef = system.actorOf(
+    ClusterRouterPool(
+      RoundRobinPool(3),
+      ClusterRouterPoolSettings(totalInstances = 100, maxInstancesPerNode = 3, allowLocalRoutees = false)
+    ).props(ProductCatalog.props(new SearchService())),
+    name = "productCatalogRouter"
+  )
+
   override protected def routes: Route = {
-    path("work") {
+    path("search") {
       post {
-        entity(as[HttpWorker.Work]) { work =>
+        entity(as[GetItems]) { query: ProductCatalog.Query =>
           complete {
-            (workers ? work).mapTo[HttpWorker.Response]
+            (clusterWorkers ? query).mapTo[Items]
           }
         }
       }

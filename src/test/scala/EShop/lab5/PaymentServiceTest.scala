@@ -12,11 +12,11 @@ import scala.concurrent.duration._
 
 class PaymentServiceTest
   extends TestKit(ActorSystem("PaymentServiceTest"))
-    with FlatSpecLike
-    with ImplicitSender
-    with BeforeAndAfterAll
-    with Matchers
-    with ScalaFutures {
+  with FlatSpecLike
+  with ImplicitSender
+  with BeforeAndAfterAll
+  with Matchers
+  with ScalaFutures {
 
   override def afterAll: Unit =
     TestKit.shutdownActorSystem(system)
