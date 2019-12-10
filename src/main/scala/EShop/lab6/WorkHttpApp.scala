@@ -26,22 +26,20 @@ class HttpWorker extends Actor with ActorLogging {
       log.info(s"I got to work on $a")
       sender ! Response("Done")
   }
-
 }
 
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
-  implicit val workerWork     = jsonFormat1(HttpWorker.Work)
-  implicit val workerResponse = jsonFormat1(HttpWorker.Response)
+  implicit val workerWork: RootJsonFormat[HttpWorker.Work]         = jsonFormat1(HttpWorker.Work)
+  implicit val workerResponse: RootJsonFormat[HttpWorker.Response] = jsonFormat1(HttpWorker.Response)
 
   //custom formatter just for example
-  implicit val uriFormat = new JsonFormat[java.net.URI] {
+  implicit val uriFormat: JsonFormat[java.net.URI] = new JsonFormat[java.net.URI] {
     override def write(obj: java.net.URI): spray.json.JsValue = JsString(obj.toString)
     override def read(json: JsValue): URI = json match {
       case JsString(url) => new URI(url)
       case _             => throw new RuntimeException("Parsing exception")
     }
   }
-
 }
 
 object WorkHttpApp extends App {
@@ -50,8 +48,8 @@ object WorkHttpApp extends App {
 
 class WorkHttpServer extends HttpApp with JsonSupport {
 
-  val system  = ActorSystem("ReactiveRouters")
-  val workers = system.actorOf(RoundRobinPool(5).props(Props[HttpWorker]), "workersRouter")
+  val system: ActorSystem = ActorSystem("ReactiveRouters")
+  val workers: ActorRef   = system.actorOf(RoundRobinPool(5).props(Props[HttpWorker]), "workersRouter")
 
   implicit val timeout: Timeout = 5.seconds
 
@@ -66,5 +64,4 @@ class WorkHttpServer extends HttpApp with JsonSupport {
       }
     }
   }
-
 }

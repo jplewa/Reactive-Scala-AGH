@@ -1,8 +1,8 @@
 package EShop.lab3
 
+import EShop.lab2.{CartActor, CartActorFSM, Checkout}
 import EShop.lab2.CartActor.CheckoutStarted
 import EShop.lab2.Checkout.PaymentStarted
-import EShop.lab2.{CartActor, CartActorFSM, Checkout}
 import EShop.lab3.OrderManager._
 import EShop.lab3.Payment.DoPayment
 import akka.actor.{ActorRef, FSM}

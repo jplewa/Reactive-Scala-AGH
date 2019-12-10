@@ -1,6 +1,6 @@
 package EShop.lab6
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.cluster.routing.{ClusterRouterPool, ClusterRouterPoolSettings}
 import akka.http.scaladsl.server.{HttpApp, Route}
 import akka.pattern.ask
@@ -40,7 +40,7 @@ class WorkHttpServerInCluster() extends HttpApp with JsonSupport {
     config.getConfig("cluster-default")
   )
 
-  val workers = system.actorOf(
+  val workers: ActorRef = system.actorOf(
     ClusterRouterPool(
       RoundRobinPool(0),
       ClusterRouterPoolSettings(totalInstances = 100, maxInstancesPerNode = 3, allowLocalRoutees = false)

@@ -16,7 +16,6 @@ class Worker extends Actor with ActorLogging {
       log.info(s"I got to work on $a")
       context.stop(self)
   }
-
 }
 
 object Master {
@@ -26,7 +25,7 @@ object Master {
 class Master extends Actor with ActorLogging {
   val nbOfRoutees = 5
 
-  val routees = Vector.fill(nbOfRoutees) {
+  val routees: Vector[ActorRefRoutee] = Vector.fill(nbOfRoutees) {
     val r = context.actorOf(Props[Worker])
     context watch r // we subscribe for akka.actor.Terminated messages, we want to know when some worker was terminated
     ActorRefRoutee(r)

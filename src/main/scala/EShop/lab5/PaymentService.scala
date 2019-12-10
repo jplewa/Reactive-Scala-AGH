@@ -15,7 +15,6 @@ object PaymentService {
   class PaymentServerError extends Exception // http statuses 500, 408, 418
 
   def props(method: String, payment: ActorRef) = Props(new PaymentService(method, payment))
-
 }
 
 class PaymentService(method: String, payment: ActorRef) extends Actor with ActorLogging with PipeToSupport {
