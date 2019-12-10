@@ -74,6 +74,7 @@ class PaymentServiceTest
             Stop
         }
     }))
+
     failure.expectMsg("failed")
   }
 }

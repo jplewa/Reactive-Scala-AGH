@@ -4,7 +4,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{AsyncFlatSpec, Matchers}
-import ProductCatalog.GetItems
+import EShop.lab5.ProductCatalog.GetItems
 
 import scala.concurrent.duration._
 
@@ -32,5 +32,4 @@ class ProductCatalogRemoteTest extends AsyncFlatSpec with Matchers {
       assert(items.items.size == 10)
     }
   }
-
 }

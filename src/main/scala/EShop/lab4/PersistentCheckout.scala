@@ -1,7 +1,7 @@
 package EShop.lab4
 
-import EShop.lab2.CartActor.CloseCheckout
 import EShop.lab2.{CartActor, Checkout}
+import EShop.lab2.CartActor.CloseCheckout
 import EShop.lab3.Payment
 import akka.actor.{ActorRef, Cancellable, Props, Scheduler}
 import akka.event.{Logging, LoggingAdapter, LoggingReceive}

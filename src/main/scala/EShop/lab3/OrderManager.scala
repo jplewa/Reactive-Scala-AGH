@@ -1,7 +1,7 @@
 package EShop.lab3
 
-import EShop.lab2.CartActor.CheckoutStarted
 import EShop.lab2._
+import EShop.lab2.CartActor.CheckoutStarted
 import EShop.lab3.Payment.DoPayment
 import akka.actor.{Actor, ActorRef, Props}
 import akka.event.LoggingReceive

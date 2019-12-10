@@ -1,11 +1,11 @@
 package EShop.lab3
 
-import EShop.lab2.CartActor._
 import EShop.lab2.{Cart, CartActor}
+import EShop.lab2.CartActor._
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit}
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
+import org.scalatest.concurrent.ScalaFutures
 
 class CartActorTest
   extends TestKit(ActorSystem("CartActorTest"))

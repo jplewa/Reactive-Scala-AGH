@@ -5,8 +5,8 @@ import EShop.lab2.Checkout
 import EShop.lab2.Checkout._
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
+import org.scalatest.concurrent.ScalaFutures
 
 class CheckoutFSMTest
   extends TestKit(ActorSystem("CheckoutFSMTest"))

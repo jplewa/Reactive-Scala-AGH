@@ -1,12 +1,12 @@
 package EShop.lab5
 
 import EShop.lab3.Payment.{DoPayment, PaymentConfirmed}
-import EShop.lab5.Payment.{PaymentRejected, PaymentRestarted}
+import EShop.lab5.Payment.PaymentRestarted
 import PaymentServiceServer.PaymentServiceServer
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
+import org.scalatest.concurrent.ScalaFutures
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

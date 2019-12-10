@@ -5,8 +5,8 @@ import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit}
 import akka.util.Timeout
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{Assertion, BeforeAndAfterAll, FlatSpecLike, Matchers}
+import org.scalatest.concurrent.ScalaFutures
 
 import scala.concurrent.duration._
 

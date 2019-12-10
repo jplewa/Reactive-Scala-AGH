@@ -1,6 +1,7 @@
 package PaymentServiceServer
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.model.StatusCode
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.get
@@ -14,7 +15,7 @@ trait PaymentRoutes {
 
   implicit def system: ActorSystem
 
-  implicit lazy val timeout = Timeout(5.seconds)
+  implicit lazy val timeout: Timeout = Timeout(5.seconds)
 
   var counter = 0
 
@@ -23,7 +24,7 @@ trait PaymentRoutes {
       complete(getResponse)
     }
 
-  private def getResponse = {
+  private def getResponse: StatusCode with Serializable = {
     if (counter < 2) {
       counter += 1
       ImATeapot
@@ -38,6 +39,5 @@ trait PaymentRoutes {
         case _         => ImATeapot
       }
     }
-
   }
 }
