@@ -30,3 +30,5 @@ libraryDependencies += "io.gatling"            % "gatling-test-framework"    % "
 
 // scalaFmt
 scalafmtOnCompile := true
+
+Test / parallelExecution := false 

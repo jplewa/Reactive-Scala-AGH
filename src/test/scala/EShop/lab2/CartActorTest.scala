@@ -8,7 +8,7 @@ import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
 import scala.concurrent.duration._
 
 class CartActorTest
-  extends TestKit(ActorSystem("CheckoutTest"))
+  extends TestKit(ActorSystem("CartActorTest"))
   with FlatSpecLike
   with ImplicitSender
   with BeforeAndAfterAll {
@@ -154,7 +154,7 @@ object CartActorTest {
     system.actorOf(Props(new CartActor {
       override val cartTimerDuration: FiniteDuration = 1.seconds
 
-      override def empty() = {
+      override def empty: Receive = {
         val result = super.empty
         sender ! emptyMsg
         sender ! 0
@@ -174,7 +174,5 @@ object CartActorTest {
         sender ! cart.size
         result
       }
-
     }))
-
 }

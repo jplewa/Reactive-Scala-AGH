@@ -6,7 +6,7 @@ import akka.pattern.ask
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit}
 import akka.util.Timeout
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
+import org.scalatest.{Assertion, BeforeAndAfterAll, FlatSpecLike, Matchers}
 
 import scala.concurrent.duration._
 
@@ -22,10 +22,7 @@ class OrderManagerIntegrationTest
 
   it should "supervise whole order process" in {
 
-    def sendMessage(
-      orderManager: TestActorRef[OrderManager],
-      message: OrderManager.Command
-    ): Unit =
+    def sendMessage(orderManager: TestActorRef[OrderManager], message: OrderManager.Command): Assertion =
       (orderManager ? message).mapTo[OrderManager.Ack].futureValue shouldBe Done
 
     val orderManager = TestActorRef(new OrderManager())
@@ -40,5 +37,4 @@ class OrderManagerIntegrationTest
 
     (orderManager ? Pay).mapTo[String].futureValue shouldBe "order manager finished job"
   }
-
 }
